@@ -11,15 +11,8 @@ package com.oracle.oda.ext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-import org.springframework.context.ApplicationContext;
-
-import javafx.application.Application;
 
 /***************************************************************************
  * <PRE>
@@ -50,36 +43,4 @@ public class MyApplication{
 		LOGGER.info("*********** Start Application ***********");
 		SpringApplication.run(MyApplication.class, args);
 	}
-
-/*
-	@Autowired
-	private ApplicationContext applicationContext;
-
-	@Override
-	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		return application.sources(MyApplication.class);
-	}
-
-	public static void main(String[] args) {
-		LOGGER.info("*********** Start Application ***********");
-		SpringApplication.run(Application.class, args);
-	}
-
-	private void displayAllBeans() {
-		String[] allBeanNames = applicationContext.getBeanDefinitionNames();
-		LOGGER.info("*****************************************");
-		LOGGER.info("***** Here are all registered beans *****");
-		for (String beanName : allBeanNames) {
-			LOGGER.info(beanName);
-		}
-		LOGGER.info("*** All registered beans listed above ***");
-		LOGGER.info("*****************************************");
-	}
-
-	@Override
-	public void run(String... args) throws Exception {
-		displayAllBeans();
-	}
-
- */
 }
