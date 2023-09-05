@@ -12,30 +12,20 @@ package com.oracle.oda.ext.controllers;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.oracle.oda.ext.pojos.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.oracle.oda.ext.pojos.CustomerOrder;
-import com.oracle.oda.ext.pojos.GeoJson;
-import com.oracle.oda.ext.pojos.JsonResponse;
-import com.oracle.oda.ext.pojos.MlObj;
-import com.oracle.oda.ext.pojos.OnlineOrder;
-import com.oracle.oda.ext.pojos.OrderReport;
-import com.oracle.oda.ext.pojos.ProdOrderDetail;
-import com.oracle.oda.ext.pojos.ProdStat;
-import com.oracle.oda.ext.pojos.Product;
 import com.oracle.oda.ext.services.FoodsService;
 import com.oracle.oda.ext.services.FoodsService_GSM;
 import com.oracle.oda.ext.utils.StringUtil;
+import org.springframework.web.client.RestTemplate;
 
 /***************************************************************************
  * <PRE>
@@ -148,5 +138,16 @@ public class RestApiController {
 		LOGGER.info("*** Got getOrderDetails request.");
 		List<ProdOrderDetail> prods = getService(loc).getOrderDetails(loc, prod);
 		return JsonResponse.inst("OK", HttpStatus.OK, prods).toResponseEntity();
+	}
+
+	@Value("${ords.url}")
+	private String ordsUrl;
+
+	@RequestMapping(value = "/order_dv" ,method ={RequestMethod.POST,RequestMethod.PUT})
+	public ResponseEntity<JsonResponse> addOrderByDuailtyView(@RequestBody OrderDv order) {
+		LOGGER.info("*** Add order by duality view.");
+		RestTemplate restTemplate = new RestTemplate();
+		OrderDv result = restTemplate.postForObject(ordsUrl+"/order_dv/", order, OrderDv.class);
+		return JsonResponse.inst("OK", HttpStatus.OK, result).toResponseEntity();
 	}
 }

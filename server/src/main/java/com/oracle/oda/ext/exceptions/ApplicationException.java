@@ -28,6 +28,7 @@ package com.oracle.oda.ext.exceptions;
  * 
  *</PRE>
  ***************************************************************************/
+
 public class ApplicationException extends RuntimeException {
 	private static final long serialVersionUID = 3080773205666453343L;
 

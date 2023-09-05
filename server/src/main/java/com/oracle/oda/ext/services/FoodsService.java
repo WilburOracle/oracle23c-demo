@@ -70,9 +70,6 @@ public class FoodsService {
     public void insertOnlineOrder(OnlineOrder o) throws ApplicationException {
         LOGGER.info("*** Inserting OnlineOrder: " + o);
         //MyShardingKeyContext.setShardingKey(o.getCountryCode());
-        if (o.getDt() == null) {
-            o.setDt(DateUtil.nowTs());
-        }
         try {
             mapper.insertOnlineOrder(o);
         } catch (Exception e) {

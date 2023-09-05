@@ -18,7 +18,8 @@ CREATE TABLE  "ONLINE_ORDER_ITEMS"
 	"AMOUNT" NUMBER, 
 	"ORDER_ID" VARCHAR2(50), 
 	"LATITUDE" NUMBER, 
-	"LONGITUDE" NUMBER
+	"LONGITUDE" NUMBER,
+	CONSTRAINT "ONLINE_ORDER_ITEMS_PK" PRIMARY KEY ("ORDER_ID", "ITEM_ID")
    ) 
 /
 
@@ -31,7 +32,8 @@ CREATE TABLE  "CUSTOMER_ORDER"
 	"LOCATION" VARCHAR2(500), 
 	"CARD" VARCHAR2(50), 
 	"COUNTRY_CODE" VARCHAR2(50),
-	"ORDER_ID" VARCHAR2(50)
+	"ORDER_ID" VARCHAR2(50),
+	CONSTRAINT "CUSTOMER_ORDER_PK" PRIMARY KEY ("ORDER_ID")
    )
 /
 
@@ -119,3 +121,25 @@ create or replace FUNCTION GET_GEOMETRY (
 CREATE INDEX "SPIDX_ONLINE_S" ON ONLINE_STORES (GET_GEOMETRY("LONGITUDE","LATITUDE")) INDEXTYPE IS "MDSYS"."SPATIAL_INDEX_V2"  PARAMETERS ('layer_gtype=POINT cbtree_index=true');
 /
 
+
+CREATE JSON RELATIONAL DUALITY VIEW order_dv AS
+  SELECT JSON {'orderId' : o.order_id,
+               'name'   : o.name,
+               'phone' : o.phone,
+               'location' : o.location,
+               'card' : o.card,
+               'countryCode' : o.country_code,
+               'items' :
+                 [ SELECT JSON {'itemId' : i.item_id,
+                                'countryCode'     : i.COUNTRY_CODE,
+                                'orderDateTime'     : i.ORDER_DATETIME,
+                                'lineId'     : i.LINE_ID,
+                                'quantity'     : i.QUANTITY,
+                                'amount'     : i.AMOUNT,
+                                'orderId'     : i.ORDER_ID,
+                                'latitude'     : i.LATITUDE,
+                                'longitude'   : i.LONGITUDE}
+                     FROM online_order_items i WITH INSERT UPDATE
+                     WHERE i.order_id = o.order_id ]}
+  FROM customer_order o WITH INSERT UPDATE DELETE;
+  /

@@ -59,7 +59,7 @@
 		) VALUES (
             #{countryCode, jdbcType=VARCHAR},
 			#{orderId, jdbcType=VARCHAR},
-			#{dt, jdbcType=TIMESTAMP},
+			#{orderDateTime, jdbcType=TIMESTAMP},
 			#{lineId, jdbcType=VARCHAR},
             #{quantity, jdbcType=INTEGER},
             #{itemId, jdbcType=VARCHAR},
