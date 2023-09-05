@@ -1133,6 +1133,17 @@
 
     }
 
+    function getNowString() {
+        let times = new Date().toLocaleString('en-US',{hour12: false}).split(" ")
+        let time = times[1]
+        let mdy = times[0]
+        mdy = mdy.split('/')
+        let month = parseInt(mdy[0]);
+        let day = parseInt(mdy[1]);
+        let year = parseInt(mdy[2])
+        return year + '-' + month + '-' + day + 'T' + time
+    }
+
     function placeOrder() {
       modal.style.display = "block";
       console.log(globalJsonObject);
@@ -1153,6 +1164,90 @@
       // countryCode = document.getElementById("sel_country_code").value;
       console.log(countryCode);
 
+      nowString = getNowString();
+      now = Date.now();
+      orderid = 'O_' + now;
+
+      console.log(restaurant_id);
+      console.log(restaurant_address);
+      console.log(restaurant_latlng);
+
+      const jsonItemsObject = JSON.parse(globalJsonObject);
+
+      // Increase count for the food item if exists
+
+      const jsonItemsCountArray = jsonItemsObject.items;
+      // var countryCode = document.getElementById("sel_country_code").value;
+      var countryCode = document.getElementById('sel_location').value;
+      if (countryCode === null) {
+        countryCode = localStorage.getItem("sel_location");
+      }
+
+
+      let items = [];
+      for (let i = 0; i < jsonItemsCountArray.length; i++) {
+        let obj = jsonItemsCountArray[i];
+
+        _orderlineid = i + 1;
+        _orderquantity = obj.properties.count;
+        _orderamount = Number(obj.properties.value * obj.properties.count).toFixed(2);
+        _lat = customerlatlng.lat;
+        _long = customerlatlng.lng;
+        _itemid = obj.properties.name;
+
+        items.push('{'
+          +'"countryCode"  : "'+countryCode+'",'
+          +'"orderDateTime"  : "'+nowString+'",'
+          +'"lineId" : "'+_orderlineid+'",'
+          +'"quantity" : "'+_orderquantity+'",'
+          +'"itemId" : "'+_itemid+'",'
+          +'"amount" : "'+_orderamount+'",'
+          +'"orderId" : "'+orderid+'",'
+          +'"latitude" : "'+_lat+'",'
+          +'"longitude" : "'+_long+'"'
+          +'}');
+      }
+
+      URL = "/myfoods-service/api/order_dv"
+
+      var orderobj = '{'
+        +'"countryCode"  : "'+countryCode+'",'
+        +'"name"  : "'+fname+'",'
+        +'"phone" : "'+phone+'",'
+        +'"location" : "'+address+'",'
+        +'"orderId" : "'+orderid+'",'
+        +'"card" : "'+card+'",'
+        +'"items" : ['+items.join()+']'
+        +'}';
+
+      const xhr = new XMLHttpRequest();
+      xhr.open('PUT', URL);
+      xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+      xhr.send(orderobj);
+
+    }
+
+    function placeOrder_app() {
+      modal.style.display = "block";
+      console.log(globalJsonObject);
+      console.log(customerlatlng);
+
+      fname = document.getElementById("fname").value;
+      console.log(fname);
+      phone = document.getElementById("phone").value;
+      console.log(phone);
+      address = document.getElementById("address").value;
+      console.log(address);
+      card = document.getElementById("card").value;
+      console.log(card);
+      countryCode = document.getElementById('sel_location').value;
+      if (countryCode === null) {
+        countryCode = localStorage.getItem("sel_location");
+      }
+      // countryCode = document.getElementById("sel_country_code").value;
+      console.log(countryCode);
+
+      nowString = getNowString();
       now = Date.now();
       orderid = 'O_' + now;
 
@@ -1201,7 +1296,7 @@
 
         var orderobj = '{'
           +'"countryCode"  : "'+countryCode+'",'
-          +'"orderDateTime"  : "'+now+'",'
+          +'"orderDateTime"  : "'+nowString+'",'
           +'"lineId" : "'+_orderlineid+'",'
           +'"quantity" : "'+_orderquantity+'",'
           +'"itemId" : "'+_itemid+'",'
@@ -1222,12 +1317,7 @@
       xhr.open('POST', URL);
       xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
       xhr.send(orderobj);
-
-
-
-
       }
-
     }
 
     function viewCart() {
